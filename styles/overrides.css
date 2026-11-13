@@ -26,11 +26,14 @@ body {
   background-color: #008080;
 }
 
-/* ── Title bar: navy-to-blue gradient, white text ── */
-.topbar.topbar-glass {
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+/* ── Title bar: navy-to-blue gradient, white text ──
+ * The dashboard pins the header background with !important for reduced
+ * transparency and accessibility; the html[data-theme] prefix plus !important
+ * outranks those (0,3,1 vs 0,2,1) without touching any other surface. */
+html[data-theme] .topbar.topbar-glass {
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
   color: #ffffff;
   box-shadow: inset 0 -1px #0a0a0a, inset 0 -2px #808080;
   --text: #ffffff;
