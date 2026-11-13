@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+(function () {
+  // Kiro 98 idle screensaver: a starfield with a ghost drifting across it.
+  // Mounted by Kiro Crew after the idle trigger; any input unmounts it.
+  var c = document.getElementById('c');
+  var g = c.getContext('2d');
+  var W = 0, H = 0, stars = [];
+  var GHOST = [
+    '....KKKKKK....', '..KKWWWWWWKK..', '.KWWWWWWWWWWK.', '.KWWWWWWWWWWK.',
+    'KWWWEEWWEEWWWK', 'KWWWEEWWEEWWWK', 'KWWWWWWWWWWWWK', 'KWWWWWWWWWWWWK',
+    'KWWWWWWWWWWWWK', 'KWWWWWWWWWWWWK', 'KWWWWWWWWWWWWK', 'KWWWWWWWWWWWWK',
+    'KWWKKWWWWKKWWK', 'KWK..KWWK..KWK', 'KK....KK....KK'
+  ];
+  var PX = 6, GW = 14 * PX, GH = 15 * PX;
+  var gx = 40, gy = 40, vx = 1.6, vy = 1.1, hue = 0;
+  var running = true;
+
+  function resize() {
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+    stars = [];
+    for (var i = 0; i < 260; i++) stars.push(spawn(true));
+  }
+  function spawn(anywhere) {
+    return { x: (Math.random() - 0.5) * W, y: (Math.random() - 0.5) * H, z: anywhere ? Math.random() * W : W };
+  }
+  function drawGhost(x, y) {
+    var tint = 'hsl(' + hue + ',70%,82%)';
+    for (var r = 0; r < GHOST.length; r++) {
+      for (var k = 0; k < GHOST[r].length; k++) {
+        var ch = GHOST[r][k];
+        if (ch === '.') continue;
+        g.fillStyle = ch === 'W' ? tint : '#000';
+        g.fillRect(Math.round(x + k * PX), Math.round(y + r * PX), PX, PX);
+      }
+    }
+  }
+  function frame() {
+    if (!running) return;
+    g.fillStyle = '#000';
+    g.fillRect(0, 0, W, H);
+    var cx = W / 2, cy = H / 2;
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      s.z -= 6;
+      if (s.z <= 1) { stars[i] = spawn(false); continue; }
+      var sx = cx + (s.x / s.z) * W * 0.5;
+      var sy = cy + (s.y / s.z) * H * 0.5;
+      if (sx < 0 || sy < 0 || sx > W || sy > H) { stars[i] = spawn(false); continue; }
+      var size = s.z < W * 0.25 ? 3 : s.z < W * 0.6 ? 2 : 1;
+      g.fillStyle = '#fff';
+      g.fillRect(sx | 0, sy | 0, size, size);
+    }
+    gx += vx; gy += vy;
+    if (gx < 0 || gx + GW > W) { vx = -vx; hue = (hue + 67) % 360; }
+    if (gy < 0 || gy + GH > H) { vy = -vy; hue = (hue + 67) % 360; }
+    drawGhost(gx, gy);
+    g.fillStyle = '#c0c0c0';
+    g.font = '16px monospace';
+    g.fillText('Kiro 98', Math.round(gx + 8), Math.round(gy + GH + 20));
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener('message', function (e) {
+    var d = e.data || {};
+    if (d.type === 'theme:state' && d.reducedMotion) { running = false; }
+  });
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "slug": "kiro98",
+  "name": "Kiro 98",
+  "emoji": "🖥️",
+  "level": 2,
+  "formatVersion": 1,
+  "branding": { "botName": "Kiro 98" },
+  "fonts": [
+    { "family": "Pixelify Sans", "file": "pixelify-sans.ttf", "weight": 400, "role": "sans" },
+    { "family": "Pixelify Sans", "file": "pixelify-sans.ttf", "weight": 500, "role": "sans" },
+    { "family": "Pixelify Sans", "file": "pixelify-sans.ttf", "weight": 600, "role": "sans" },
+    { "family": "Pixelify Sans", "file": "pixelify-sans.ttf", "weight": 700, "role": "sans" },
+    { "family": "VT323", "file": "vt323.ttf", "weight": 400, "role": "mono" }
+  ],
+  "overlays": [
+    {
+      "id": "screensaver",
+      "src": "overlays/screensaver.html",
+      "position": "fullscreen",
+      "layer": "above",
+      "zIndex": 60,
+      "pointerEvents": false,
+      "animation": "continuous",
+      "trigger": "idle-180s"
+    }
+  ]
+}
